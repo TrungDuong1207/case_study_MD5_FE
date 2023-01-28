@@ -3,14 +3,12 @@ import { Navigate, useRoutes } from 'react-router-dom';
 import DashboardLayout from './layouts/dashboard';
 import SimpleLayout from './layouts/simple';
 //
-import BlogPage from './pages/BlogPage';
+
 import StudentPage from './pages/students/StudentPage';
 import LoginPage from './pages/LoginPage';
 import Page404 from './pages/Page404';
-import ProductsPage from './pages/ProductsPage';
 import DashboardAppPage from './pages/DashboardAppPage';
 import RegisterPage from './pages/Register';
-import StudentAddPage from './pages/students/StudentAddPage';
 
 // ----------------------------------------------------------------------
 
@@ -24,8 +22,7 @@ export default function Router() {
         { path: 'app', element: <DashboardAppPage /> },
         {
           path: 'students', element: <StudentPage />
-        },
-        { path: 'add-student', element: <StudentAddPage /> }
+        }
       ],
     },
     {

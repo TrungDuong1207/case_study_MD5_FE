@@ -4,6 +4,7 @@ import { sentenceCase } from 'change-case';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
 // @mui
 import {
   Card,
@@ -11,6 +12,7 @@ import {
   Stack,
   Paper,
   Avatar,
+  Alert,
   Button,
   Checkbox,
   TableRow,
@@ -21,6 +23,12 @@ import {
   TableContainer,
   TablePagination,
 } from '@mui/material';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+
 // components
 import Label from '../../components/label';
 import Iconify from '../../components/iconify';
@@ -28,9 +36,10 @@ import Scrollbar from '../../components/scrollbar';
 // sections
 import { UserListHead, UserListToolbar } from '../../sections/@dashboard/user';
 // mock
-import { getStudents } from '../../services/userService'
-import { getAllStudent } from '../../features/students/studentSlice'
+import { getStudents, deleteStudentApi } from '../../services/userService'
+import { deleteOneStudent, getAllStudent } from '../../features/students/studentSlice'
 
+import { FormAddStudent } from '../../sections/@dashboard/user/studentAdd';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -78,8 +87,6 @@ export default function StudentPage() {
   // const [students, setStudents] = useState([]);
   const students = useSelector(state => state.students);
 
-  const [open, setOpen] = useState(null);
-
   const [page, setPage] = useState(0);
 
   const [order, setOrder] = useState('asc');
@@ -91,6 +98,32 @@ export default function StudentPage() {
   const [filterName, setFilterName] = useState('');
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const [open, setOpen] = useState(false);
+  const [openAdd, setOpenAdd] = useState(false);
+  const [idDelete, setIdDelete] = useState(-1)
+
+  const handleClickOpen = (id) => {
+    setOpen(true);
+    setIdDelete(id);
+  };
+
+  const handleClickOpenAdd = () => {
+    setOpenAdd(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setOpenAdd(false);
+  };
+
+  const handleDelete = (id) => {
+    setOpen(false);
+    deleteStudentApi(id).then(() => {
+      dispatch(deleteOneStudent(id));
+      toast.success("delete student success!")
+    });
+  }
 
   useEffect(() => {
     getStudents().then(res => {
@@ -164,7 +197,7 @@ export default function StudentPage() {
           <Typography variant="h4" gutterBottom>
             Student
           </Typography>
-          <Button variant="contained" onClick={addStudent} startIcon={<Iconify icon="eva:plus-fill" />}>
+          <Button variant="contained" onClick={handleClickOpenAdd} startIcon={<Iconify icon="eva:plus-fill" />}>
             New Student
           </Button>
         </Stack>
@@ -211,8 +244,12 @@ export default function StudentPage() {
                         </TableCell>
                         <TableCell align="left">{studyClass.className}</TableCell>
                         <TableCell align="left">
-                          <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
-                          <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2, color: 'error.main' }} />
+                          <Button variant="outlined" sx={{ mr: 2 }} color="info" onClick={() => handleClickOpen(id)}>
+                            Update
+                          </Button>
+                          <Button variant="outlined" color="error" onClick={() => handleClickOpen(id)}>
+                            Delete
+                          </Button>
                         </TableCell>
                       </TableRow>
                     );
@@ -262,7 +299,39 @@ export default function StudentPage() {
           />
         </Card>
       </Container>
-
+      {/* dialog delete */}
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          <Typography color="error" variant='h5' component={'span'}>Delete Student</Typography>
+        </DialogTitle>
+        <Alert severity="error">
+          <Typography variant='h6' component={'span'}>Do you wan't delete this Student?</Typography>
+        </Alert>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={() => handleDelete(idDelete)} color="error" autoFocus>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+      {/* dialog add newStudent */}
+      <Dialog open={openAdd} onClose={handleClose} maxWidth="md">
+        <DialogTitle>Add New Student</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            To add student to this website, please enter student's information here.
+          </DialogContentText>
+          <FormAddStudent />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }

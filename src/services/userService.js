@@ -71,3 +71,14 @@ export const addStudent = async (data) =>{
     };
 }
 
+export const deleteStudentApi = async (id) =>{
+    try {
+        const url = `/students/${id}`
+        console.log(url)
+        return await axios.delete(`/students/${id}`)
+    } 
+    catch(e) {
+        return (toast.error(e.response.data.message))
+    };
+    
+}
