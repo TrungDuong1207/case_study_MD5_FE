@@ -1,4 +1,5 @@
 import * as React from 'react';
+import PropTypes from 'prop-types';
 import { toast } from 'react-toastify';
 import { useState, useEffect } from 'react';
 import { useFormik } from 'formik';
@@ -14,6 +15,7 @@ import {
     FormLabel,
     Radio,
     Button,
+    Avatar,
     Fab,
     MenuItem,
     InputLabel,
@@ -21,16 +23,17 @@ import {
 } from '@mui/material';
 
 import { LoadingButton } from '@mui/lab';
-import { addStudent, getClass } from '../../../../services/userService';
+import { editStudentApi, getClass } from '../../../../services/userService';
 // components
 
-import { addOneStudent } from '../../../../features/students/studentSlice'; 
-
+import { editOneStudent } from '../../../../features/students/studentSlice';
 // ----------------------------------------------------------------------
 
+FormEditStudent.propTypes = {
+    student: PropTypes.object,
+};
 
-export default function FormAddStudent() {
-    
+export default function FormEditStudent({ student }) {
     const dispatch = useDispatch();
     const [classes, setClasses] = useState([])
     useEffect(() => {
@@ -40,12 +43,13 @@ export default function FormAddStudent() {
     }, [])
     const formik = useFormik({
         initialValues: {
-            studentName: "",
-            dateOfBirth: "",
-            address: "",
-            gender: "",
+            id: student.id,
+            studentName: student.studentName,
+            dateOfBirth: student.dateOfBirth,
+            address: student.address,
+            gender: student.gender,
             image: "",
-            studyClassId: ""
+            studyClassId: student.studyClass.id
         },
         validationSchema: Yup.object({
             studentName: Yup.string()
@@ -58,15 +62,16 @@ export default function FormAddStudent() {
                 .required("must be fill"),
             gender: Yup.string()
                 .required("must be fill"),
-            
+            image: Yup.string()
+                .required("must be fill"),
         }),
 
-        onSubmit: (values, { resetForm }) => {
-            addStudent(values).then ((res)=>{
-                dispatch(addOneStudent(res.data))
-                toast.success("add student successfully")
-            });  
-            resetForm();
+        onSubmit: (values) => {
+            editStudentApi(values).then((res) => {
+                dispatch(editOneStudent(res.data))
+                toast.success("edit student successfully")
+            });
+            
         },
     });
 
@@ -76,6 +81,7 @@ export default function FormAddStudent() {
                 <Stack spacing={3}>
                     <TextField
                         name="studentName"
+                        defaultValue="abc"
                         value={formik.values.studentName}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
@@ -124,14 +130,13 @@ export default function FormAddStudent() {
                         }
                     />
 
-                    <InputLabel id="demo-select-small">Class</InputLabel>
                     <Select
                         labelId="demo-select-small"
                         id="demo-select-small"
                         name="studyClassId"
                         value={formik.values.studyClassId}
                         onChange={formik.handleChange}
-                        
+
                     >
                         <MenuItem value="">
                             <em>--choose class--</em>
@@ -141,18 +146,17 @@ export default function FormAddStudent() {
                         )}
 
                     </Select>
-                    
 
                 </Stack>
 
                 <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
                     <LoadingButton fullWidth size="large" type="submit" variant="contained" >
-                        Add Student
+                        Update Student
                     </LoadingButton>
                 </Stack>
 
             </form>
-            
+
         </>
     );
 }

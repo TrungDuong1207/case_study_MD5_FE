@@ -57,7 +57,7 @@ export default function Nav({ openNav, onCloseNav }) {
         <Logo />
       </Box> */}
 
-      <Box sx={{ mb: 5, mx: 2.5 }}>
+      <Box sx={{ mb: 5, mx: 2.5, mt: 2 }}>
         <Link underline="none">
           <StyledAccount>
             <Avatar src="https://upload.wikimedia.org/wikipedia/commons/2/25/Harvard_University_shield.png" alt="photoURL" />

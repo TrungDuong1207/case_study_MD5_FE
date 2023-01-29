@@ -40,6 +40,7 @@ import { getStudents, deleteStudentApi } from '../../services/userService'
 import { deleteOneStudent, getAllStudent } from '../../features/students/studentSlice'
 
 import { FormAddStudent } from '../../sections/@dashboard/user/studentAdd';
+import { FormEditStudent } from '../../sections/@dashboard/user/studentEdit';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
@@ -87,6 +88,8 @@ export default function StudentPage() {
   // const [students, setStudents] = useState([]);
   const students = useSelector(state => state.students);
 
+  const [student, setStudent] = useState({});
+
   const [page, setPage] = useState(0);
 
   const [order, setOrder] = useState('asc');
@@ -101,6 +104,7 @@ export default function StudentPage() {
 
   const [open, setOpen] = useState(false);
   const [openAdd, setOpenAdd] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
   const [idDelete, setIdDelete] = useState(-1)
 
   const handleClickOpen = (id) => {
@@ -112,9 +116,20 @@ export default function StudentPage() {
     setOpenAdd(true);
   };
 
+  const handleClickOpenEdit = (id) => {
+
+    const student = students.find((item) => {
+      return item.id === id
+    })
+    console.log(student)
+    setStudent(student);
+    setOpenEdit(true);
+  };
+
   const handleClose = () => {
     setOpen(false);
     setOpenAdd(false);
+    setOpenEdit(false);
   };
 
   const handleDelete = (id) => {
@@ -127,7 +142,6 @@ export default function StudentPage() {
 
   useEffect(() => {
     getStudents().then(res => {
-      // setStudents(res.data);
       dispatch(getAllStudent(res.data))
     })
   }, [])
@@ -244,7 +258,7 @@ export default function StudentPage() {
                         </TableCell>
                         <TableCell align="left">{studyClass.className}</TableCell>
                         <TableCell align="left">
-                          <Button variant="outlined" sx={{ mr: 2 }} color="info" onClick={() => handleClickOpen(id)}>
+                          <Button variant="outlined" sx={{ mr: 2 }} color="info" onClick={() => handleClickOpenEdit(id)}>
                             Update
                           </Button>
                           <Button variant="outlined" color="error" onClick={() => handleClickOpen(id)}>
@@ -319,6 +333,7 @@ export default function StudentPage() {
           </Button>
         </DialogActions>
       </Dialog>
+
       {/* dialog add newStudent */}
       <Dialog open={openAdd} onClose={handleClose} maxWidth="md">
         <DialogTitle>Add New Student</DialogTitle>
@@ -327,6 +342,20 @@ export default function StudentPage() {
             To add student to this website, please enter student's information here.
           </DialogContentText>
           <FormAddStudent />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* dialog edit Student */}
+      <Dialog open={openEdit} onClose={handleClose} maxWidth="md">
+        <DialogTitle>Update New Student</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            To update student to this website, please enter student's information here.
+          </DialogContentText>
+          <FormEditStudent student={student} />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>

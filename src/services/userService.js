@@ -74,11 +74,35 @@ export const addStudent = async (data) =>{
 export const deleteStudentApi = async (id) =>{
     try {
         const url = `/students/${id}`
-        console.log(url)
-        return await axios.delete(`/students/${id}`)
+        return await axios.delete(url)
     } 
     catch(e) {
         return (toast.error(e.response.data.message))
     };
     
+}
+
+export const editStudentApi = async (values) =>{
+    try {
+        const url = `/students/${values.id}`
+        console.log(url)
+        return await axios({
+            method: 'put',
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+            url: `/students/${values.id}`,
+            data: {
+                studentName: values.studentName,
+                dateOfBirth: values.dateOfBirth,
+                address: values.address,
+                gender: values.gender,
+                image: values.image,
+                studyClass: values.studyClassId
+            }
+        })
+    } 
+    catch(e) {
+        return (toast.error(e.response.data.message))
+    };
 }

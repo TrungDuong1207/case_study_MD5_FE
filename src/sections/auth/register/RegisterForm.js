@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
-
+import { toast } from 'react-toastify';
 import * as Yup from 'yup';
 // @mui
 import { Stack, IconButton, InputAdornment, TextField, Checkbox } from '@mui/material';
@@ -44,6 +44,7 @@ export default function RegisterForm() {
             register(values).then((res) => {
                 if(res.data){
                     navigate('/login');
+                    toast.success("register success!!!");
                 }
                 
             })
