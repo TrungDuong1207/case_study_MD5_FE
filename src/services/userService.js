@@ -44,6 +44,18 @@ export const getStudents = async ()=>{
     return axios.get("/students")
 }
 
+export const getStudent = async (id) =>{
+    try {
+        const url = `/students/${id}`
+        return await axios.get(url)
+    } 
+    catch(e) {
+        return (toast.error(e.response.data.message))
+    };
+    
+}
+
+
 export const getClass = async ()=>{
     return axios.get("/class")
 }
@@ -105,4 +117,35 @@ export const editStudentApi = async (values) =>{
     catch(e) {
         return (toast.error(e.response.data.message))
     };
+}
+
+export const getMarkApi = async (id) =>{
+    try {
+        const url = `/marks/${id}`
+        return await axios.get(url)
+    } 
+    catch(e) {
+        return (toast.error(e.response.data.message))
+    };
+}
+
+export const getSubjectsApi = async () =>{
+    return axios.get("/subjects")
+}
+
+export const addMarkApi = async (values) =>{
+    try {
+        return await axios({
+             method: 'post',
+             url: `/marks/${values.studentId}`,
+             data: {
+                 mark: values.mark,
+                 semester: values.semester,
+                 subject: values.subjectId
+             }
+         })
+     }
+     catch (e) {
+         return (toast.error(e.response.data.message))
+     };
 }

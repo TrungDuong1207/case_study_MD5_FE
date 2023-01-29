@@ -5,6 +5,7 @@ import SimpleLayout from './layouts/simple';
 //
 
 import StudentPage from './pages/students/StudentPage';
+import StudentDeTailPage from './pages/students/StudentDetailPage';
 import LoginPage from './pages/LoginPage';
 import Page404 from './pages/Page404';
 import DashboardAppPage from './pages/DashboardAppPage';
@@ -22,6 +23,9 @@ export default function Router() {
         { path: 'app', element: <DashboardAppPage /> },
         {
           path: 'students', element: <StudentPage />
+        },
+        {
+          path: 'students/:id', element: <StudentDeTailPage />
         }
       ],
     },

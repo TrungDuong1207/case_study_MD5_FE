@@ -77,7 +77,7 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query) {
-    return filter(array, (_user) => _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(array, (_user) => _user.studentName.toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
   return stabilizedThis.map((el) => el[0]);
 }
@@ -140,6 +140,10 @@ export default function StudentPage() {
     });
   }
 
+  const handleClickDetail = (id) =>{
+    navigate(`/dashboard/students/${id}`)
+  }
+
   useEffect(() => {
     getStudents().then(res => {
       dispatch(getAllStudent(res.data))
@@ -190,9 +194,6 @@ export default function StudentPage() {
     setFilterName(event.target.value);
   };
 
-  const addStudent = () => {
-    navigate("/dashboard/add-student")
-  }
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - students.length) : 0;
 
@@ -257,12 +258,15 @@ export default function StudentPage() {
                           <Label color={(gender === 'male' && 'error') || 'success'}>{sentenceCase(gender)}</Label>
                         </TableCell>
                         <TableCell align="left">{studyClass.className}</TableCell>
-                        <TableCell align="left">
+                        <TableCell align="center">
                           <Button variant="outlined" sx={{ mr: 2 }} color="info" onClick={() => handleClickOpenEdit(id)}>
                             Update
                           </Button>
-                          <Button variant="outlined" color="error" onClick={() => handleClickOpen(id)}>
+                          <Button variant="outlined" sx={{ mr: 2 }} color="error" onClick={() => handleClickOpen(id)}>
                             Delete
+                          </Button>
+                          <Button variant="outlined" color="success" onClick={() => handleClickDetail(id)}>
+                            Detail
                           </Button>
                         </TableCell>
                       </TableRow>
