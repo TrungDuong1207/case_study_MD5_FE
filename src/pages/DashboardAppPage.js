@@ -101,9 +101,9 @@ export default function DashboardAppPage() {
 
           <Grid item xs={12} md={6} lg={4}>
             <AppCurrentVisits
-              title="Current Visits"
+              title="Number Of Member"
               chartData={[
-                { label: 'America', value: 4344 },
+                { label: 'America', value: 400 },
                 { label: 'Asia', value: 5435 },
                 { label: 'Europe', value: 1443 },
                 { label: 'Africa', value: 4443 },

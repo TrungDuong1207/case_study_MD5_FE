@@ -5,6 +5,7 @@ import { styled } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
 import { useSelector, useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
 import {
     Avatar,
     Typography,
@@ -16,7 +17,8 @@ import {
     TableHead,
     TableRow,
     Button,
-    Stack
+    Stack,
+    Alert
 }
     from "@mui/material";
 import { tableCellClasses } from '@mui/material/TableCell';
@@ -27,9 +29,11 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Label from '../../components/label';
 import Iconify from '../../components/iconify';
-import { getMarkApi, getStudent } from "../../services/userService";
+import { getStudent } from "../../services/userService";
+import { getMarkApi, deleteMarkApi } from "../../services/markService";
 import { FormAddMark } from "../../sections/@dashboard/user/markAdd";
-import { getAllMark } from "../../features/marks/markSlice";
+import { FormEditMark } from "../../sections/@dashboard/user/markEdit";
+import { getAllMark, deleteOneMark } from "../../features/marks/markSlice";
 import "./loading.css";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -67,19 +71,23 @@ export default function StudentDeTailPage() {
     const [openAdd, setOpenAdd] = useState(false);
     const [student, setStudent] = useState({});
     const [loading, setLoading] = useState(true)
+    const [openDelete, setOpenDelete] = useState(false);
+    const [idDelete, setIdDelete] = useState(-1);
+    const [openEdit, setOpenEdit] = useState(false);
+    const [mark, setMark] = useState({});
 
     useEffect(() => {
         getStudent(id).then((res) => {
             setStudent(res.data);
             setLoading(false)
         })
-    }, [])
+    }, [id])
 
     useEffect(() => {
         getMarkApi(id).then(res => {
             dispatch(getAllMark(res.data))
         })
-    }, [])
+    }, [id, dispatch])
 
     const handleClickOpenAdd = () => {
         setOpenAdd(true);
@@ -87,7 +95,29 @@ export default function StudentDeTailPage() {
 
     const handleClose = () => {
         setOpenAdd(false);
+        setOpenDelete(false);
+        setOpenEdit(false)
+    };
 
+    const handleClickOpen = (id) => {
+        setOpenDelete(true);
+        setIdDelete(id);
+    };
+
+    const handleDelete = (id) => {
+        setOpenDelete(false);
+        deleteMarkApi(id).then(() => {
+            dispatch(deleteOneMark(id));
+            toast.success("delete mark success!")
+        });
+    }
+
+    const handleClickOpenEdit = (id) => {
+        const mark = marks.find((item) => {
+          return item.id === id
+        });
+        setMark(mark);
+        setOpenEdit(true);
     };
 
     return (
@@ -146,7 +176,8 @@ export default function StudentDeTailPage() {
                                                     <StyledTableCell align="center">Semester</StyledTableCell>
                                                     <StyledTableCell align="center">Year</StyledTableCell>
                                                     <StyledTableCell align="center">Mark</StyledTableCell>
-                                                    <StyledTableCell align="center">Edit</StyledTableCell>
+                                                    <StyledTableCell align="center">{ }</StyledTableCell>
+
                                                 </TableRow>
                                             </TableHead>
                                             <TableBody>
@@ -162,7 +193,15 @@ export default function StudentDeTailPage() {
                                                         </StyledTableCell>
                                                         <StyledTableCell align="center">{mark.year}</StyledTableCell>
                                                         <StyledTableCell align="center">{mark.mark}</StyledTableCell>
-                                                        <StyledTableCell align="center">{ }</StyledTableCell>
+                                                        <StyledTableCell align="center">
+                                                            <Button variant="outlined" sx={{ mr: 2 }} color="info" onClick={() => handleClickOpenEdit(mark.id)}>
+                                                                Update
+                                                            </Button>
+                                                            <Button variant="outlined" sx={{ mr: 2 }} color="error" onClick={() => handleClickOpen(mark.id)}>
+                                                                Delete
+                                                            </Button>
+                                                        </StyledTableCell>
+
                                                     </StyledTableRow>
                                                 ))}
                                             </TableBody>
@@ -196,6 +235,41 @@ export default function StudentDeTailPage() {
                         To add mark to this website, please enter here.
                     </DialogContentText>
                     <FormAddMark />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose}>Cancel</Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* dialog delete */}
+            <Dialog
+                open={openDelete}
+                onClose={handleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">
+                    <Typography color="error" variant='h5' component={'span'}>Delete Mark</Typography>
+                </DialogTitle>
+                <Alert severity="error">
+                    <Typography variant='h6' component={'span'}>Do you wan't delete this mark?</Typography>
+                </Alert>
+                <DialogActions>
+                    <Button onClick={handleClose}>Cancel</Button>
+                    <Button onClick={() => handleDelete(idDelete)} color="error" autoFocus>
+                        Delete
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* dialog edit Student */}
+            <Dialog open={openEdit} onClose={handleClose} maxWidth="md">
+                <DialogTitle>Update Mark</DialogTitle>
+                <DialogContent>
+                    <DialogContentText mb={2}>
+                        To update mark to this website, please enter mark's information here.
+                    </DialogContentText>
+                    <FormEditMark mark={mark} />
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose}>Cancel</Button>

@@ -356,7 +356,7 @@ export default function StudentPage() {
       <Dialog open={openEdit} onClose={handleClose} maxWidth="md">
         <DialogTitle>Update New Student</DialogTitle>
         <DialogContent>
-          <DialogContentText>
+          <DialogContentText mb={2}>
             To update student to this website, please enter student's information here.
           </DialogContentText>
           <FormEditStudent student={student} />

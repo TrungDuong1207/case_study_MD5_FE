@@ -22,15 +22,15 @@ import {
 } from '@mui/material';
 
 import { LoadingButton } from '@mui/lab';
-import { addMarkApi, getSubjectsApi } from '../../../../services/markService';
+import { editMarkApi, getSubjectsApi } from '../../../../services/markService';
 // components
 
-import { addOneMark } from '../../../../features/marks/markSlice';
+import { editOneMark } from '../../../../features/marks/markSlice';
 
 // ----------------------------------------------------------------------
 
 
-export default function FormAddMark() {
+export default function FormEditMark({ mark }) {
     const id = useParams().id;
     const dispatch = useDispatch();
     const [subjects, setSubjects] = useState([])
@@ -41,10 +41,10 @@ export default function FormAddMark() {
     }, [])
     const formik = useFormik({
         initialValues: {
-            mark: "",
-            semester: "",
-            subjectId: "",
-            studentId: id
+            mark: mark.mark,
+            semester: mark.semester,
+            subjectId: mark.subject.id,
+            markId: mark.id
         },
         validationSchema: Yup.object({
             mark: Yup.number()
@@ -58,12 +58,11 @@ export default function FormAddMark() {
 
         }),
 
-        onSubmit: (values, { resetForm }) => {
-            console.log(values)
-            addMarkApi(values).then((res) => {
+        onSubmit: async (values, { resetForm }) => {
+            await editMarkApi(values).then((res) => {
                 if (res.data) {
-                    dispatch(addOneMark(res.data));
-                    toast.success("add mark successfully")
+                    dispatch(editOneMark(res.data));
+                    toast.success("edit mark successfully")
                 }
             });
             resetForm();
@@ -74,6 +73,24 @@ export default function FormAddMark() {
         <>
             <form onSubmit={formik.handleSubmit} encType="multipart/form-data">
                 <Stack spacing={3}>
+                    <InputLabel id="demo-select-small">Subject</InputLabel>
+                    <Select
+                        labelId="demo-select-small"
+                        id="demo-select-small"
+                        name="subjectId"
+                        value={formik.values.subjectId}
+                        onChange={formik.handleChange}
+                        disabled
+                    >
+                        <MenuItem value="">
+                            <em>--choose subject--</em>
+                        </MenuItem>
+                        {subjects.length !== 0 && subjects.map((item) =>
+                            <MenuItem key={item.id} value={item.id}>{item.subjectName}</MenuItem>
+                        )}
+                    </Select>
+                    {formik.errors.subjectId && formik.touched.subjectId &&
+                        (<p style={{ color: 'red' }}>{formik.errors.subjectId}</p>)}
                     <TextField
                         name="mark"
                         type="number"
@@ -100,28 +117,13 @@ export default function FormAddMark() {
                     {formik.errors.semester && formik.touched.semester &&
                         (<p style={{ color: 'red' }}>{formik.errors.semester}</p>)}
 
-                    <InputLabel id="demo-select-small">Subject</InputLabel>
-                    <Select
-                        labelId="demo-select-small"
-                        id="demo-select-small"
-                        name="subjectId"
-                        value={formik.values.subjectId}
-                        onChange={formik.handleChange}
-                    >
-                        <MenuItem value="">
-                            <em>--choose subject--</em>
-                        </MenuItem>
-                        {subjects.length !== 0 && subjects.map((item) =>
-                            <MenuItem key={item.id} value={item.id}>{item.subjectName}</MenuItem>
-                        )}
-                    </Select>
-                    {formik.errors.subjectId && formik.touched.subjectId &&
-                        (<p style={{ color: 'red' }}>{formik.errors.subjectId}</p>)}
+
+
                 </Stack>
 
                 <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
                     <LoadingButton fullWidth size="large" type="submit" variant="contained" >
-                        Add Mark
+                        Edit Mark
                     </LoadingButton>
                 </Stack>
 
