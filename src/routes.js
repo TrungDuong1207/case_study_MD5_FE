@@ -3,7 +3,7 @@ import { Navigate, useRoutes } from 'react-router-dom';
 import DashboardLayout from './layouts/dashboard';
 import SimpleLayout from './layouts/simple';
 //
-
+import TeacherPage from './pages/teachers/TeacherPage';
 import StudentPage from './pages/students/StudentPage';
 import StudentDeTailPage from './pages/students/StudentDetailPage';
 import LoginPage from './pages/LoginPage';
@@ -26,6 +26,9 @@ export default function Router() {
         },
         {
           path: 'students/:id', element: <StudentDeTailPage />
+        },
+        {
+          path: 'teachers', element: <TeacherPage/>
         }
       ],
     },

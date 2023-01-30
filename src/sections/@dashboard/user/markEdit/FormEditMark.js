@@ -117,8 +117,6 @@ export default function FormEditMark({ mark }) {
                     {formik.errors.semester && formik.touched.semester &&
                         (<p style={{ color: 'red' }}>{formik.errors.semester}</p>)}
 
-
-
                 </Stack>
 
                 <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>

@@ -16,12 +16,16 @@ const navConfig = [
     path: '/dashboard/students',
     icon: icon('ic_user'),
   },
+  {
+    title: 'teacher manager',
+    path: '/dashboard/teachers',
+    icon: icon('ic_user'),
+  },
   // {
   //   title: 'product',
   //   path: '/dashboard/products',
   //   icon: icon('ic_cart'),
   // },
-  // {
 
   {
     title: 'Not found',
