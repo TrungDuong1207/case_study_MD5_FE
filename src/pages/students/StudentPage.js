@@ -85,7 +85,7 @@ function applySortFilter(array, comparator, query) {
 export default function StudentPage() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  // const [students, setStudents] = useState([]);
+
   const students = useSelector(state => state.students);
 
   const [student, setStudent] = useState({});

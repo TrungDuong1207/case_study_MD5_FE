@@ -25,7 +25,7 @@ import {
 import { LoadingButton } from '@mui/lab';
 import { editStudentApi, getClass } from '../../../../services/userService';
 // components
-
+import { PreviewImage } from '../../../../components/previewImage/PriviewImage';
 import { editOneStudent } from '../../../../features/students/studentSlice';
 // ----------------------------------------------------------------------
 
@@ -41,6 +41,11 @@ export default function FormEditStudent({ student }) {
             setClasses(res.data)
         })
     }, [])
+
+    const onFileChange = (files) => {
+        formik.values.image = files
+    }
+
     const formik = useFormik({
         initialValues: {
             id: student.id,
@@ -71,7 +76,7 @@ export default function FormEditStudent({ student }) {
                 dispatch(editOneStudent(res.data))
                 toast.success("edit student successfully")
             });
-            
+
         },
     });
 
@@ -122,31 +127,27 @@ export default function FormEditStudent({ student }) {
                         </RadioGroup>
                     </FormControl>
 
-                    <input
-                        name="image"
-                        type="file"
-                        onChange={(e) =>
-                            formik.setFieldValue('image', e.currentTarget.files[0])
-                        }
-                    />
+                    <PreviewImage onFileChange={(files) => onFileChange(files)} />
 
-                    <Select
-                        labelId="demo-select-small"
-                        id="demo-select-small"
-                        name="studyClassId"
-                        value={formik.values.studyClassId}
-                        onChange={formik.handleChange}
+                    <FormControl fullWidth>
+                        <InputLabel id="demo-select-small">Class</InputLabel>
+                        <Select
+                            labelId="demo-select-small"
+                            id="demo-select-small"
+                            name="studyClassId"
+                            value={formik.values.studyClassId}
+                            onChange={formik.handleChange}
+                            label="Class"
+                        >
+                            <MenuItem value="">
+                                <em>--choose class--</em>
+                            </MenuItem>
+                            {classes.length !== 0 && classes.map((item) =>
+                                <MenuItem key={item.id} value={item.id}>{item.className}</MenuItem>
+                            )}
 
-                    >
-                        <MenuItem value="">
-                            <em>--choose class--</em>
-                        </MenuItem>
-                        {classes.length !== 0 && classes.map((item) =>
-                            <MenuItem key={item.id} value={item.id}>{item.className}</MenuItem>
-                        )}
-
-                    </Select>
-
+                        </Select>
+                    </FormControl>
                 </Stack>
 
                 <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>

@@ -99,22 +99,24 @@ export default function FormAddMark() {
 
                     {formik.errors.semester && formik.touched.semester &&
                         (<p style={{ color: 'red' }}>{formik.errors.semester}</p>)}
-
-                    <InputLabel id="demo-select-small">Subject</InputLabel>
-                    <Select
-                        labelId="demo-select-small"
-                        id="demo-select-small"
-                        name="subjectId"
-                        value={formik.values.subjectId}
-                        onChange={formik.handleChange}
-                    >
-                        <MenuItem value="">
-                            <em>--choose subject--</em>
-                        </MenuItem>
-                        {subjects.length !== 0 && subjects.map((item) =>
-                            <MenuItem key={item.id} value={item.id}>{item.subjectName}</MenuItem>
-                        )}
-                    </Select>
+                    <FormControl fullWidth>
+                        <InputLabel id="demo-select-small">Subject</InputLabel>
+                        <Select
+                            labelId="demo-select-small"
+                            id="demo-select-small"
+                            name="subjectId"
+                            value={formik.values.subjectId}
+                            onChange={formik.handleChange}
+                            label="Subject"
+                        >
+                            <MenuItem value="">
+                                <em>--choose subject--</em>
+                            </MenuItem>
+                            {subjects.length !== 0 && subjects.map((item) =>
+                                <MenuItem key={item.id} value={item.id}>{item.subjectName}</MenuItem>
+                            )}
+                        </Select>
+                    </FormControl>
                     {formik.errors.subjectId && formik.touched.subjectId &&
                         (<p style={{ color: 'red' }}>{formik.errors.subjectId}</p>)}
                 </Stack>

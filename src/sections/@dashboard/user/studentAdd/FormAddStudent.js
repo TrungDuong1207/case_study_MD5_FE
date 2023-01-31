@@ -24,13 +24,14 @@ import { LoadingButton } from '@mui/lab';
 import { addStudent, getClass } from '../../../../services/userService';
 // components
 
-import { addOneStudent } from '../../../../features/students/studentSlice'; 
+import { addOneStudent } from '../../../../features/students/studentSlice';
+import { PreviewImage } from '../../../../components/previewImage/PriviewImage';
 
 // ----------------------------------------------------------------------
 
 
 export default function FormAddStudent() {
-    
+
     const dispatch = useDispatch();
     const [classes, setClasses] = useState([])
     useEffect(() => {
@@ -38,6 +39,11 @@ export default function FormAddStudent() {
             setClasses(res.data)
         })
     }, [])
+
+    const onFileChange = (files) => {
+        formik.values.image = files
+    }
+
     const formik = useFormik({
         initialValues: {
             studentName: "",
@@ -58,14 +64,15 @@ export default function FormAddStudent() {
                 .required("must be fill"),
             gender: Yup.string()
                 .required("must be fill"),
-            
+
         }),
 
         onSubmit: (values, { resetForm }) => {
-            addStudent(values).then ((res)=>{
+            console.log(values)
+            addStudent(values).then((res) => {
                 dispatch(addOneStudent(res.data))
                 toast.success("add student successfully")
-            });  
+            });
             resetForm();
         },
     });
@@ -116,33 +123,26 @@ export default function FormAddStudent() {
                         </RadioGroup>
                     </FormControl>
 
-                    <input
-                        name="image"
-                        type="file"
-                        onChange={(e) =>
-                            formik.setFieldValue('image', e.currentTarget.files[0])
-                        }
-                    />
+                    <PreviewImage onFileChange={(files) => onFileChange(files)} />
+                    <FormControl fullWidth>
+                        <InputLabel id="demo-select-small">Class</InputLabel>
+                        <Select
+                            labelId="demo-select-small"
+                            id="demo-select-small"
+                            name="studyClassId"
+                            value={formik.values.studyClassId}
+                            onChange={formik.handleChange}
+                            label="Class"
+                        >
+                            <MenuItem value="">
+                                <em>--choose class--</em>
+                            </MenuItem>
+                            {classes.length !== 0 && classes.map((item) =>
+                                <MenuItem key={item.id} value={item.id}>{item.className}</MenuItem>
+                            )}
 
-                    <InputLabel id="demo-select-small">Class</InputLabel>
-                    <Select
-                        labelId="demo-select-small"
-                        id="demo-select-small"
-                        name="studyClassId"
-                        value={formik.values.studyClassId}
-                        onChange={formik.handleChange}
-                        
-                    >
-                        <MenuItem value="">
-                            <em>--choose class--</em>
-                        </MenuItem>
-                        {classes.length !== 0 && classes.map((item) =>
-                            <MenuItem key={item.id} value={item.id}>{item.className}</MenuItem>
-                        )}
-
-                    </Select>
-                    
-
+                        </Select>
+                    </FormControl>
                 </Stack>
 
                 <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
@@ -152,7 +152,7 @@ export default function FormAddStudent() {
                 </Stack>
 
             </form>
-            
+
         </>
     );
 }

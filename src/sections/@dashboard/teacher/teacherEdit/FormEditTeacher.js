@@ -25,7 +25,7 @@ import {
 import { LoadingButton } from '@mui/lab';
 import { editTeacherApi, getSubject } from '../../../../services/teacherService';
 // components
-
+import { PreviewImage } from '../../../../components/previewImage/PriviewImage';
 import { editOneTeacher } from '../../../../features/teachers/teacherSlice';
 // ----------------------------------------------------------------------
 
@@ -42,6 +42,10 @@ export default function FormEditTeacher({ teacher }) {
             setSubjects(res.data)
         })
     }, [])
+
+    const onFileChange = (files) => {
+        formik.values.image = files
+    }
 
     const formik = useFormik({
         initialValues: {
@@ -111,30 +115,26 @@ export default function FormEditTeacher({ teacher }) {
                         </RadioGroup>
                     </FormControl>
 
-                    <input
-                        name="image"
-                        type="file"
-                        onChange={(e) =>
-                            formik.setFieldValue('image', e.currentTarget.files[0])
-                        }
-                    />
+                    <PreviewImage onFileChange={(files) => onFileChange(files)} />
 
-                    <InputLabel id="demo-select-small">Subject</InputLabel>
-                    <Select
-                        labelId="demo-select-small"
-                        id="demo-select-small"
-                        name="subjectId"
-                        value={formik.values.subjectId}
-                        onChange={formik.handleChange}
-
-                    >
-                        <MenuItem value="">
-                            <em>--choose subject--</em>
-                        </MenuItem>
-                        {subjects.length !== 0 && subjects.map((item) =>
-                            <MenuItem key={item.id} value={item.id}>{item.subjectName}</MenuItem>
-                        )}
-                    </Select>
+                    <FormControl fullWidth>
+                        <InputLabel id="demo-select-small">Subject</InputLabel>
+                        <Select
+                            labelId="demo-select-small"
+                            id="demo-select-small"
+                            name="subjectId"
+                            value={formik.values.subjectId}
+                            onChange={formik.handleChange}
+                            label="Subject"
+                        >
+                            <MenuItem value="">
+                                <em>--choose subject--</em>
+                            </MenuItem>
+                            {subjects.length !== 0 && subjects.map((item) =>
+                                <MenuItem key={item.id} value={item.id}>{item.subjectName}</MenuItem>
+                            )}
+                        </Select>
+                    </FormControl>
                 </Stack>
 
                 <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
